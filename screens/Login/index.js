@@ -1,13 +1,14 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, SafeAreaView } from "react-native";
 import { Card, Input, Button, Icon } from "react-native-elements";
 
-export default function Login() {
-  const [username, setUsername] = useState(null);
+export default function Login({ navigation }) {
+  const [phoneNumber, setPhoneNumber] = useState(null);
   const [password, setPassword] = useState(null);
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Text
         style={{
           color: "#6CC417",
@@ -26,17 +27,23 @@ export default function Login() {
         }}
       >
         <Input
-          placeholder="Username"
+          placeholder="Phone Number"
           leftIcon={{
             type: "font-awesome",
-            name: "user",
+            name: "phone",
             size: 18,
             color: "#6CC417",
             marginRight: 5,
           }}
-          label="Username"
-          onChangeText={(value) => setUsername(value)}
+          label="Phone Number"
+          onChangeText={(value) => {
+            setPhoneNumber(value);
+            setIsSubmitted(false);
+          }}
           color="#6CC417"
+          errorMessage={
+            isSubmitted && !phoneNumber ? "Enter your phone number!..." : ""
+          }
         />
         <Input
           placeholder="Password"
@@ -48,16 +55,30 @@ export default function Login() {
             marginRight: 5,
           }}
           label="Password"
-          onChangeText={(value) => setPassword(value)}
+          onChangeText={(value) => {
+            setPassword(value);
+            setIsSubmitted(false);
+          }}
           color="#6CC417"
           secureTextEntry={true}
+          errorMessage={
+            isSubmitted && !password ? "Enter your password!..." : ""
+          }
         />
 
         <Button
           icon={<Icon type="material" name="login" color="black" />}
           title="Login"
           buttonStyle={{ backgroundColor: "#6CC417" }}
-          titleStyle={{ color: "black", marginLeft: 5 }}
+          titleStyle={{
+            color: "black",
+            marginLeft: 5,
+            fontWeight: "bold",
+            fontSize: 18,
+          }}
+          onPress={() => {
+            setIsSubmitted(true);
+          }}
         />
       </Card>
       <View
@@ -69,11 +90,12 @@ export default function Login() {
         <Text style={styles.signupText}>Don't have an account?</Text>
         <Button
           type="clear"
+          onPress={() => navigation.navigate("Signup")}
           title={"Create account"}
           titleStyle={{ color: "#6CC417", fontSize: 14 }}
         />
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 
