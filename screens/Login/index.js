@@ -7,6 +7,14 @@ export default function Login({ navigation }) {
   const [password, setPassword] = useState(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
+  const handleLogin = () => {
+    setIsSubmitted(true);
+    navigation.reset({
+      index: 0,
+      routes: [{ name: "Dashboard" }],
+    });
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <Text
@@ -77,7 +85,7 @@ export default function Login({ navigation }) {
             fontSize: 18,
           }}
           onPress={() => {
-            setIsSubmitted(true);
+            handleLogin();
           }}
         />
       </Card>
