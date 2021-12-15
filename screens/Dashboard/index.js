@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StatusBar, StyleSheet, ScrollView } from "react-native";
+import { View, Text, StatusBar, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import { Icon, FAB, Card } from "react-native-elements";
 
 const fakeData = [
@@ -7,28 +7,44 @@ const fakeData = [
   title: "Facebook",
   username: "maanaskatta6@gmail.com",
   password:"temp@123"
+},{
+  title: "Amazon",
+  username: "maanaskatta6@gmail.com",
+  password:"temp@123"
+},{
+  title: "Whatsapp",
+  username: "maanaskatta6@gmail.com",
+  password:"temp@123"
 },
 ]
 
 const CredentialCard = ({data}) => {
   return (
-    <Card>
-      <Card.Title>{data.title}</Card.Title>
+    <Card containerStyle={{backgroundColor:"black", borderColor:"#6CC417"}}> 
+      <Card.Title style={styles.credentialTitle}>{data.title}</Card.Title>
       <View>
-        <View>
-          <Text>Username</Text>
-          <Text>{data.username}</Text>
+        <View style={styles.credentialContainer}>
+          <Text style={styles.credentialLabel}>Username :</Text>
+          <Text style={styles.credentialValue}>{data.username}</Text>
         </View>
-        <View>
-          <Text>Password</Text>
-          <Text>{data.password}</Text>
+        <View style={styles.credentialContainer}>
+          <Text style={styles.credentialLabel}>Password :</Text>
+          <Text style={styles.credentialValue}>{data.password}</Text>
         </View>
       </View>
     </Card>
   );
 }
 
-export default function Dashboard() {
+export default function Dashboard({ navigation }) {
+  
+  const handleLogOut = () => {
+    navigation.reset({
+      index: 0,
+      routes: [{ name: "Login" }],
+    });
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.headerStyle}>
@@ -39,21 +55,35 @@ export default function Dashboard() {
           color='#6CC417' 
           size={26}
           
-          onPress={() => console.log('hello')} />
+          onPress={() => handleLogOut()} />
       </View>
 
-      <ScrollView>
+      <ScrollView style={{flex: 3, paddingTop: 10}}> 
         {
-          fakeData.map((credential) => {
+          fakeData.map((credential, index) => {
             return (
-              <CredentialCard data={credential}/>
+              <CredentialCard key={index} data={credential}/>
             );
           })
         }
       </ScrollView>
-
-      <FAB title={() => <Icon name="add" color="black" size={26} type="material" />} placement="right" color="#6CC417" />
       
+       <TouchableOpacity
+        style={{
+          borderWidth: 1,
+          alignItems: 'center',
+          justifyContent: 'center',
+          width: 60,
+          position: 'absolute',
+          bottom: 10,
+          right: 10,
+          height: 60,
+          backgroundColor: '#6CC417',
+          borderRadius: 100,
+        }}
+      >
+        <Icon onPress={() =>  navigation.navigate("AddCredentials")} name='add' size={30} color='black' />
+      </TouchableOpacity>
       
 
       
@@ -71,9 +101,27 @@ const styles = StyleSheet.create({
   },
 
   headerStyle : {
-    flex: 1,
     flexDirection: "row",
     alignItems:"baseline",
-    justifyContent:"space-between"
+    justifyContent: "space-between",
+  },
+
+  credentialTitle: { color: "#6CC417", fontSize: 20, fontWeight: "bold" },
+  
+  credentialLabel: {
+    color: "gray",
+    fontWeight:"bold"
+  },
+
+  credentialValue: {
+    color: "white",
+    fontWeight: "bold",
+    marginLeft: 5,
+    fontSize: 14
+  },
+
+  credentialContainer: {
+    flexDirection: "row",
+    marginBottom: 5
   }
 });
