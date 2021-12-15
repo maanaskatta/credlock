@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, Text, StatusBar, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
-import { Icon, FAB, Card } from "react-native-elements";
+import { Icon, Card, Overlay } from "react-native-elements";
+import { Button } from "react-native-elements/dist/buttons/Button";
 
 const fakeData = [
   {
@@ -18,7 +19,10 @@ const fakeData = [
 },
 ]
 
-const CredentialCard = ({data}) => {
+
+
+const CredentialCard = ({ data, navigation, encryptionKey }) => {
+  const [isOverlayVisible, setIsOverlayVisible] = useState(false);
   return (
     <Card containerStyle={{backgroundColor:"black", borderColor:"#6CC417"}}> 
       <Card.Title style={styles.credentialTitle}>{data.title}</Card.Title>
@@ -32,6 +36,30 @@ const CredentialCard = ({data}) => {
           <Text style={styles.credentialValue}>{data.password}</Text>
         </View>
       </View>
+      <View style={{ flex: 1, flexDirection: "row", justifyContent: "flex-end" }}>
+        <TouchableOpacity>
+          <Icon name="pencil" type="font-awesome" color="yellow" size={22} onPress={() => navigation.navigate("AddCredentials", {
+            data: data,
+            key: encryptionKey
+          })}/>
+      </TouchableOpacity>
+        
+        <TouchableOpacity>
+          <Icon name="trash" type="font-awesome" color="red" size={22} containerStyle={{ marginLeft: 15 }} onPress={() => setIsOverlayVisible(true)} />
+        </TouchableOpacity>
+        
+      </View>
+
+      <Overlay isVisible={isOverlayVisible} onBackdropPress={() => setIsOverlayVisible(false)}>
+        <View>
+          <Text style={{ color: "red", fontSize: 18, fontWeight:"bold" }}>Are you sure to delete the credential?</Text>
+          <View style={{flexDirection:"row", justifyContent:"flex-end", marginTop: 10}}>
+            <Button title="Cancel" type="clear" titleStyle={{ color: "steelblue" }} onPress={() => setIsOverlayVisible(false)} />
+            <Button title="Delete" type="solid" buttonStyle={{backgroundColor:"red", marginLeft: 10}} titleStyle={{ color: "white" }} />
+            
+          </View>
+        </View>
+      </Overlay>
     </Card>
   );
 }
@@ -44,6 +72,11 @@ export default function Dashboard({ navigation }) {
       routes: [{ name: "Login" }],
     });
   };
+
+  const userData = {
+  firstName: "Maanas Katta",
+  phoneNumber : "5419304455"
+}
 
   return (
     <View style={styles.container}>
@@ -62,7 +95,9 @@ export default function Dashboard({ navigation }) {
         {
           fakeData.map((credential, index) => {
             return (
-              <CredentialCard key={index} data={credential}/>
+              <View key={index}>
+                <CredentialCard encryptionKey={userData.firstName + " " + userData.phoneNumber} data={credential} navigation={navigation}/>
+              </View>
             );
           })
         }
@@ -75,14 +110,16 @@ export default function Dashboard({ navigation }) {
           justifyContent: 'center',
           width: 60,
           position: 'absolute',
-          bottom: 10,
-          right: 10,
+          bottom: 20,
+          right: 20,
           height: 60,
           backgroundColor: '#6CC417',
           borderRadius: 100,
         }}
       >
-        <Icon onPress={() =>  navigation.navigate("AddCredentials")} name='add' size={30} color='black' />
+        <Icon onPress={() => navigation.navigate("AddCredentials", {
+          key: userData.firstName + " " + userData.phoneNumber
+        })} name='add' size={30} color='black' />
       </TouchableOpacity>
       
 
@@ -106,7 +143,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
 
-  credentialTitle: { color: "#6CC417", fontSize: 20, fontWeight: "bold" },
+  credentialTitle: { color: "#6CC417", fontSize: 16, fontWeight: "bold" },
   
   credentialLabel: {
     color: "gray",

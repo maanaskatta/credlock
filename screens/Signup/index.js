@@ -24,6 +24,7 @@ export default function Signup({ navigation }) {
         name="arrow-left"
         type="font-awesome"
         color="#6CC417"
+        size={30}
       />
       <View
         style={{

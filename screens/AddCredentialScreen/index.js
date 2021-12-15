@@ -2,14 +2,33 @@ import React, {useState} from 'react';
 import { View, Text, StyleSheet, StatusBar, ScrollView} from "react-native";
 import { Icon, Input, Button } from "react-native-elements";
 import * as Crypto from "crypto-js";
+import axios from 'axios';
 
 
-export default function AddCredentialScreen({navigation}) {
+export default function AddCredentialScreen({navigation, route}) {
 
     const [isSubmitted, setIsSubmitted] = useState(false);
-    const [title, setTitle] = useState(null);
-    const [username, setUsername] = useState(null);
-    const [password, setPassword] = useState(null);
+    const [title, setTitle] = useState(route && route.params && route.params.data && route.params.data.title  ? route.params.data.title :  null);
+    const [username, setUsername] = useState(route && route.params && route.params.data && route.params.data.username ? route.params.data.username :  null);
+    const [password, setPassword] = useState(route && route.params && route.params.data && route.params.data.password ? route.params.data.password :  null);
+
+    const encryptWithAES = (text) => {
+        return Crypto.AES.encrypt(text, route.params.key).toString();
+    }
+
+    const addNewCredential =  () => {
+        // let res = await axios.post("", {
+            // title: encryptWithAES(title),
+            // username: encryptWithAES(username),
+            // password: encryptWithAES(password)
+        // })
+
+        console.log({
+            title: encryptWithAES(title),
+            username: encryptWithAES(username),
+            password: encryptWithAES(password)
+        });
+    }
 
     return (
         <ScrollView
@@ -20,7 +39,8 @@ export default function AddCredentialScreen({navigation}) {
         onPress={() => navigation.navigate("Dashboard")}
         name="arrow-left"
         type="font-awesome"
-        color="#6CC417"
+                color="#6CC417"
+                size={30}
       />
       <View
         style={{
@@ -48,6 +68,7 @@ export default function AddCredentialScreen({navigation}) {
               color: "#6CC417",
               style: { marginRight: 10 },
             }}
+                        value={ title}
             onChangeText={(value) => {
               setTitle(value);
               setIsSubmitted(false);
@@ -68,6 +89,7 @@ export default function AddCredentialScreen({navigation}) {
               color: "#6CC417",
               style: { marginRight: 10 },
             }}
+                        value={ username}
             onChangeText={(value) => {
               setUsername(value);
               setIsSubmitted(false);
@@ -88,6 +110,7 @@ export default function AddCredentialScreen({navigation}) {
               color: "#6CC417",
               style: { marginRight: 10 },
             }}
+                        value={ password}
             onChangeText={(value) => {
               setPassword(value);
               setIsSubmitted(false);
@@ -122,7 +145,8 @@ export default function AddCredentialScreen({navigation}) {
               width: "100%",
             }}
             onPress={() => {
-              setIsSubmitted(true);
+                setIsSubmitted(true);
+                addNewCredential();
             }}
           />
         </View>

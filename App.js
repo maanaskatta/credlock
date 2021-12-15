@@ -22,7 +22,11 @@ export default function App() {
           <Stack.Screen name="Login" component={Login} />
           <Stack.Screen name="Signup" component={Signup} />
           <Stack.Screen name="Dashboard" component={Dashboard} />
-          <Stack.Screen name="AddCredentials" component={AddCredentialScreen} />
+          <Stack.Screen name="AddCredentials">
+            {
+              props => <AddCredentialScreen {...props}/>
+            }
+          </Stack.Screen>
           
         </Stack.Navigator>
       </View>
