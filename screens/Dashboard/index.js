@@ -24,7 +24,7 @@ const fakeData = [
 const CredentialCard = ({ data, navigation, encryptionKey }) => {
   const [isOverlayVisible, setIsOverlayVisible] = useState(false);
   return (
-    <Card containerStyle={{backgroundColor:"black", borderColor:"#6CC417"}}> 
+    <Card containerStyle={{backgroundColor:"black", borderColor:"#6CC417", width:"100%", marginLeft: -0}}> 
       <Card.Title style={styles.credentialTitle}>{data.title}</Card.Title>
       <View>
         <View style={styles.credentialContainer}>
@@ -81,7 +81,7 @@ export default function Dashboard({ navigation }) {
   return (
     <View style={styles.container}>
       <View style={styles.headerStyle}>
-        <Text style={{ color: "#6CC417", fontSize: 20, fontWeight:"bold" }}>Dashboard</Text>
+        <Text style={{ color: "#6CC417", fontSize: 24, fontWeight:"bold" }}>Dashboard</Text>
         <Icon
           name='logout'
           type='material'
