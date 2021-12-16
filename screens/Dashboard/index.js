@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { View, Text, StatusBar, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import { Icon, Card, Overlay } from "react-native-elements";
 import { Button } from "react-native-elements/dist/buttons/Button";
+import Loading from "../../component/Loading";
 
 const fakeData = [
   {
@@ -65,6 +66,9 @@ const CredentialCard = ({ data, navigation, encryptionKey }) => {
 }
 
 export default function Dashboard({ navigation }) {
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [isLogoutOverlayOpen, setIsLogoutOverlayOpen] = useState(false);
   
   const handleLogOut = () => {
     navigation.reset({
@@ -88,10 +92,23 @@ export default function Dashboard({ navigation }) {
           color='#6CC417' 
           size={26}
           
-          onPress={() => handleLogOut()} />
+          onPress={() => setIsLogoutOverlayOpen(true)} />
       </View>
 
-      <ScrollView style={{flex: 3, paddingTop: 10}}> 
+      <Overlay isVisible={isLogoutOverlayOpen} onBackdropPress={() => setIsLogoutOverlayOpen(false)}>
+        <View>
+          <Text style={{ color: "red", fontSize: 18, fontWeight:"bold" }}>Are you sure to logout?</Text>
+          <View style={{flexDirection:"row", justifyContent:"flex-end", marginTop: 10}}>
+            <Button title="Cancel" type="clear" titleStyle={{ color: "steelblue" }} onPress={() => setIsLogoutOverlayOpen(false)} />
+            <Button title="Logout" type="solid" buttonStyle={{backgroundColor:"red", marginLeft: 10}} titleStyle={{ color: "white" }} onPress={() => handleLogOut()} />
+          </View>
+        </View>
+      </Overlay>
+
+      
+
+      {
+        isLoading ? <Loading/> : <ScrollView style={{flex: 3, paddingTop: 10}}> 
         {
           fakeData.map((credential, index) => {
             return (
@@ -102,6 +119,7 @@ export default function Dashboard({ navigation }) {
           })
         }
       </ScrollView>
+      }
       
        <TouchableOpacity
         style={{
