@@ -1,37 +1,73 @@
-import React, {useState} from 'react';
-import { View, Text, StyleSheet, StatusBar, ScrollView} from "react-native";
+import React, { useState } from "react";
+import { View, Text, StyleSheet, StatusBar, ScrollView } from "react-native";
 import { Icon, Input, Button } from "react-native-elements";
 import * as Crypto from "crypto-js";
-import axios from 'axios';
+import insertData from "../../RouteControllers/insertData";
+import updateData from "../../RouteControllers/updateData";
 
+export default function AddCredentialScreen({ navigation, route }) {
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
-export default function AddCredentialScreen({navigation, route}) {
+  const [mutationInProgress, setMutationInProgress] = useState(false);
 
-    const [isSubmitted, setIsSubmitted] = useState(false);
-    const [title, setTitle] = useState(route && route.params && route.params.data && route.params.data.title  ? route.params.data.title :  null);
-    const [username, setUsername] = useState(route && route.params && route.params.data && route.params.data.username ? route.params.data.username :  null);
-    const [password, setPassword] = useState(route && route.params && route.params.data && route.params.data.password ? route.params.data.password :  null);
+  const [title, setTitle] = useState(
+    route && route.params && route.params.data && route.params.data.title
+      ? route.params.data.title
+      : null
+  );
+  const [username, setUsername] = useState(
+    route && route.params && route.params.data && route.params.data.username
+      ? route.params.data.username
+      : null
+  );
+  const [password, setPassword] = useState(
+    route && route.params && route.params.data && route.params.data.password
+      ? route.params.data.password
+      : null
+  );
 
-    const encryptWithAES = (text) => {
-        return Crypto.AES.encrypt(text, route.params.key).toString();
+  const encryptWithAES = (text) => {
+    return Crypto.AES.encrypt(text, route.params.key).toString();
+  };
+
+  const addCredential = async (data) => {
+    let res = await insertData("addCredential", data);
+    if (res) {
+      setMutationInProgress(false);
+    } else {
+      setMutationInProgress(false);
     }
+    console.log(res);
+  };
 
-    const addNewCredential =  () => {
-        // let res = await axios.post("", {
-            // title: encryptWithAES(title),
-            // username: encryptWithAES(username),
-            // password: encryptWithAES(password)
-        // })
-
-        console.log({
-            title: encryptWithAES(title),
-            username: encryptWithAES(username),
-            password: encryptWithAES(password)
-        });
+  const updateCredential = async (data) => {
+    let res = await updateData("updateCredential", data);
+    if (res) {
+      setMutationInProgress(false);
+    } else {
+      setMutationInProgress(false);
     }
+    console.log(res);
+  };
 
-    return (
-        <ScrollView
+  const handleSubmit = () => {
+    let data = {
+      title: encryptWithAES(title),
+      username: encryptWithAES(username),
+      password: encryptWithAES(password),
+    };
+
+    setMutationInProgress(true);
+
+    if (route && route.params && route.params.data) {
+      updateCredential(data);
+    } else {
+      addCredential(data);
+    }
+  };
+
+  return (
+    <ScrollView
       style={styles.container}
       contentContainerStyle={{ alignItems: "flex-start", flex: 1 }}
     >
@@ -39,8 +75,8 @@ export default function AddCredentialScreen({navigation, route}) {
         onPress={() => navigation.navigate("Dashboard")}
         name="arrow-left"
         type="font-awesome"
-                color="#6CC417"
-                size={30}
+        color="#6CC417"
+        size={30}
       />
       <View
         style={{
@@ -59,7 +95,6 @@ export default function AddCredentialScreen({navigation, route}) {
           Add new credential
         </Text>
         <View style={{ flex: 1 }}>
-            
           <Input
             placeholder="Credential title..."
             leftIcon={{
@@ -68,7 +103,7 @@ export default function AddCredentialScreen({navigation, route}) {
               color: "#6CC417",
               style: { marginRight: 10 },
             }}
-                        value={ title}
+            value={title}
             onChangeText={(value) => {
               setTitle(value);
               setIsSubmitted(false);
@@ -79,8 +114,7 @@ export default function AddCredentialScreen({navigation, route}) {
               isSubmitted && !title ? "Enter your credential title!..." : ""
             }
           />
-          
-          
+
           <Input
             placeholder="Username/email..."
             leftIcon={{
@@ -89,7 +123,7 @@ export default function AddCredentialScreen({navigation, route}) {
               color: "#6CC417",
               style: { marginRight: 10 },
             }}
-                        value={ username}
+            value={username}
             onChangeText={(value) => {
               setUsername(value);
               setIsSubmitted(false);
@@ -97,12 +131,13 @@ export default function AddCredentialScreen({navigation, route}) {
             inputStyle={{ color: "white" }}
             containerStyle={{ margin: 20, marginLeft: 0 }}
             errorMessage={
-              isSubmitted && !username ? "Enter your account username/email!..." : ""
+              isSubmitted && !username
+                ? "Enter your account username/email!..."
+                : ""
             }
           />
-          
 
-            <Input
+          <Input
             placeholder="Password..."
             leftIcon={{
               type: "font-awesome",
@@ -110,7 +145,7 @@ export default function AddCredentialScreen({navigation, route}) {
               color: "#6CC417",
               style: { marginRight: 10 },
             }}
-                        value={ password}
+            value={password}
             onChangeText={(value) => {
               setPassword(value);
               setIsSubmitted(false);
@@ -123,15 +158,25 @@ export default function AddCredentialScreen({navigation, route}) {
           />
           <Button
             icon={
-              <Icon
-                type="font-awesome"
-                name="arrow-right"
-                color="black"
-                style={{ marginLeft: 10 }}
-              />
+              mutationInProgress ? (
+                <Icon
+                  type="font-awesome"
+                  name="spinner"
+                  color="black"
+                  style={{ marginLeft: 10 }}
+                />
+              ) : (
+                <Icon
+                  type="font-awesome"
+                  name="arrow-right"
+                  color="black"
+                  style={{ marginLeft: 10 }}
+                />
+              )
             }
             iconPosition="right"
-            title="Submit"
+            disabled={mutationInProgress}
+            title={mutationInProgress ? "Please wait" : "Submit"}
             buttonStyle={{ backgroundColor: "#6CC417" }}
             titleStyle={{
               color: "black",
@@ -145,14 +190,14 @@ export default function AddCredentialScreen({navigation, route}) {
               width: "100%",
             }}
             onPress={() => {
-                setIsSubmitted(true);
-                addNewCredential();
+              setIsSubmitted(true);
+              handleSubmit();
             }}
           />
         </View>
       </View>
     </ScrollView>
-    )
+  );
 }
 
 const styles = StyleSheet.create({
