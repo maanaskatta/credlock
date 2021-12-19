@@ -323,10 +323,10 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
 
-  credentialTitle: { color: "#6CC417", fontSize: 16, fontWeight: "bold" },
+  credentialTitle: { color: "#6CC417", fontSize: 25, fontWeight: "bold" },
 
   credentialLabel: {
-    color: "gray",
+    color: "#949996",
     fontWeight: "bold",
   },
 

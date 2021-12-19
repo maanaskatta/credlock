@@ -5,9 +5,11 @@ import {
   StyleSheet,
   SafeAreaView,
   ToastAndroid,
+  Image,
 } from "react-native";
 import { Card, Input, Button, Icon } from "react-native-elements";
 import getData from "../../RouteControllers/getData";
+import Logo from "../../assets/CredLockLogo.png";
 
 export default function Login({ navigation }) {
   const [phoneNumber, setPhoneNumber] = useState(null);
@@ -57,7 +59,7 @@ export default function Login({ navigation }) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text
+      {/* <Text
         style={{
           color: "#6CC417",
           fontSize: 20,
@@ -66,7 +68,17 @@ export default function Login({ navigation }) {
         }}
       >
         CREDLOCK
-      </Text>
+      </Text> */}
+      <View>
+        <Image
+          source={Logo}
+          style={{
+            flexDirection: "row",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        />
+      </View>
       <Card
         containerStyle={{
           width: "100%",
