@@ -1,7 +1,15 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, StatusBar, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  StatusBar,
+  ScrollView,
+  ToastAndroid,
+} from "react-native";
 import { Icon } from "react-native-elements/dist/icons/Icon";
 import { Input, Button } from "react-native-elements";
+import insertData from "../../RouteControllers/insertData";
 
 export default function Signup({ navigation }) {
   const [fullName, setFullName] = useState(null);
@@ -9,10 +17,36 @@ export default function Signup({ navigation }) {
   const [password, setPassword] = useState(null);
   const [confirmPassword, setConfirmPassword] = useState(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [mutationInProgress, setMutationInProgress] = useState(false);
 
-  // const signUp = () => {
+  const addNewUser = async (data) => {
+    setMutationInProgress(true);
+    let res = await insertData("addUser", data);
+    if (res) {
+      console.log(res.data);
+      setMutationInProgress(false);
+      ToastAndroid.show("User added successfully!...", ToastAndroid.SHORT);
+      navigation.navigate("Login");
+    } else {
+      setMutationInProgress(false);
+      ToastAndroid.show("Failed to add new user!...", ToastAndroid.SHORT);
+    }
+    console.log(res);
+  };
 
-  // }
+  const handleSignup = () => {
+    let data = {
+      fullName,
+      phoneNumber,
+      password,
+    };
+
+    if (fullName && phoneNumber && password && confirmPassword) {
+      if (password === confirmPassword) {
+        addNewUser(data);
+      }
+    }
+  };
 
   return (
     <ScrollView
@@ -126,15 +160,25 @@ export default function Signup({ navigation }) {
 
           <Button
             icon={
-              <Icon
-                type="font-awesome"
-                name="arrow-right"
-                color="black"
-                style={{ marginLeft: 10 }}
-              />
+              mutationInProgress ? (
+                <Icon
+                  type="font-awesome"
+                  name="spinner"
+                  color="black"
+                  style={{ marginLeft: 10 }}
+                />
+              ) : (
+                <Icon
+                  type="font-awesome"
+                  name="arrow-right"
+                  color="black"
+                  style={{ marginLeft: 10 }}
+                />
+              )
             }
             iconPosition="right"
-            title="Signup"
+            disabled={mutationInProgress}
+            title={mutationInProgress ? "Please wait" : "Signup"}
             buttonStyle={{ backgroundColor: "#6CC417" }}
             titleStyle={{
               color: "black",
@@ -149,6 +193,7 @@ export default function Signup({ navigation }) {
             }}
             onPress={() => {
               setIsSubmitted(true);
+              handleSignup();
             }}
           />
         </View>

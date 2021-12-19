@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import axios from "axios";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -6,31 +7,36 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
+  ToastAndroid,
 } from "react-native";
 import { Icon, Card, Overlay } from "react-native-elements";
 import { Button } from "react-native-elements/dist/buttons/Button";
+import * as Crypto from "crypto-js";
 import Loading from "../../component/Loading";
+import deleteData from "../../RouteControllers/deleteData";
 
-const fakeData = [
-  {
-    title: "Facebook",
-    username: "maanaskatta6@gmail.com",
-    password: "temp@123",
-  },
-  {
-    title: "Amazon",
-    username: "maanaskatta6@gmail.com",
-    password: "temp@123",
-  },
-  {
-    title: "Whatsapp",
-    username: "maanaskatta6@gmail.com",
-    password: "temp@123",
-  },
-];
-
-const CredentialCard = ({ data, navigation, encryptionKey }) => {
+const CredentialCard = ({ data, navigation, encryptionKey, userID }) => {
   const [isOverlayVisible, setIsOverlayVisible] = useState(false);
+  const [mutationInProgress, setMutationInProgress] = useState(false);
+
+  const deleteCredential = async (data) => {
+    setMutationInProgress(true);
+    let res = await deleteData("deleteCredential", data);
+    if (res) {
+      ToastAndroid.show(
+        "Credential deleted successfully...",
+        ToastAndroid.SHORT
+      );
+      // setGates(gates.filter((item) => item.gateID !== gate.gateID));
+      setMutationInProgress(false);
+      setIsOverlayVisible(false);
+    } else {
+      ToastAndroid.show("Failed to delete credential!...", ToastAndroid.SHORT);
+      setMutationInProgress(false);
+      setIsOverlayVisible(false);
+    }
+  };
+
   return (
     <Card
       containerStyle={{
@@ -63,7 +69,8 @@ const CredentialCard = ({ data, navigation, encryptionKey }) => {
             onPress={() =>
               navigation.navigate("AddCredentials", {
                 data: data,
-                key: encryptionKey,
+                encryptionKey: encryptionKey,
+                userID: userID,
               })
             }
           />
@@ -103,8 +110,14 @@ const CredentialCard = ({ data, navigation, encryptionKey }) => {
               onPress={() => setIsOverlayVisible(false)}
             />
             <Button
-              title="Delete"
+              title={mutationInProgress ? "Please wait..." : "Delete"}
               type="solid"
+              onPress={() =>
+                deleteCredential({
+                  CredID: data.CredID,
+                })
+              }
+              disabled={mutationInProgress}
               buttonStyle={{ backgroundColor: "red", marginLeft: 10 }}
               titleStyle={{ color: "white" }}
             />
@@ -115,20 +128,61 @@ const CredentialCard = ({ data, navigation, encryptionKey }) => {
   );
 };
 
-export default function Dashboard({ navigation }) {
+export default function Dashboard({ navigation, route }) {
   const [isLoading, setIsLoading] = useState(false);
   const [isLogoutOverlayOpen, setIsLogoutOverlayOpen] = useState(false);
+  const [credentials, setCredentials] = useState(null);
+  console.log("Encryption Key", route.params.encryptionKey);
+
+  const decryptWithAES = (text) => {
+    return Crypto.AES.decrypt(text, route.params.encryptionKey).toString(
+      Crypto.enc.Utf8
+    );
+  };
+
+  const getUserCredentialsData = async () => {
+    console.log(route.params.userID);
+    let res = await axios
+      .get("https://credlock.herokuapp.com/getUserCredentials", {
+        params: {
+          userID: route.params.userID,
+        },
+      })
+      .catch((err) => {
+        console.log(err);
+        setIsLoading(false);
+
+        ToastAndroid.show("Failed to load data...", ToastAndroid.SHORT);
+      });
+
+    if (res && res.data) {
+      setIsLoading(false);
+      console.log("Creds", res.data);
+
+      let finalData = res.data.map((cred) => {
+        return {
+          title: decryptWithAES(cred.title),
+          username: decryptWithAES(cred.username),
+          password: decryptWithAES(cred.password),
+          CredID: cred.CredID,
+          userID: cred.userID,
+        };
+      });
+
+      setCredentials(finalData);
+    }
+  };
+
+  useEffect(() => {
+    setIsLoading(true);
+    getUserCredentialsData();
+  }, []);
 
   const handleLogOut = () => {
     navigation.reset({
       index: 0,
       routes: [{ name: "Login" }],
     });
-  };
-
-  const userData = {
-    firstName: "Maanas Katta",
-    phoneNumber: "5419304455",
   };
 
   return (
@@ -180,22 +234,43 @@ export default function Dashboard({ navigation }) {
 
       {isLoading ? (
         <Loading />
-      ) : (
+      ) : credentials && credentials.length > 0 ? (
         <ScrollView style={{ flex: 3, paddingTop: 10 }}>
-          {fakeData.map((credential, index) => {
+          {credentials.map((credential, index) => {
             return (
               <View key={index}>
                 <CredentialCard
-                  encryptionKey={
-                    userData.firstName + " " + userData.phoneNumber
-                  }
+                  encryptionKey={route.params.encryptionKey}
                   data={credential}
                   navigation={navigation}
+                  userID={route.params.userID}
                 />
               </View>
             );
           })}
         </ScrollView>
+      ) : (
+        <View
+          style={{
+            flex: 3,
+            paddingTop: 10,
+
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Text
+            style={{
+              color: "#6CC417",
+              fontSize: 22,
+              fontWeight: "bold",
+              textShadowColor: "lime",
+              textShadowRadius: 5,
+            }}
+          >
+            No credentials found!...
+          </Text>
+        </View>
       )}
 
       <TouchableOpacity
@@ -211,17 +286,14 @@ export default function Dashboard({ navigation }) {
           backgroundColor: "#6CC417",
           borderRadius: 100,
         }}
+        onPress={() =>
+          navigation.navigate("AddCredentials", {
+            encryptionKey: route.params.encryptionKey,
+            userID: route.params.userID,
+          })
+        }
       >
-        <Icon
-          onPress={() =>
-            navigation.navigate("AddCredentials", {
-              key: userData.firstName + " " + userData.phoneNumber,
-            })
-          }
-          name="add"
-          size={30}
-          color="black"
-        />
+        <Icon name="add" size={30} color="black" />
       </TouchableOpacity>
     </View>
   );

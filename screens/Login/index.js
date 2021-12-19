@@ -1,18 +1,58 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, SafeAreaView } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  SafeAreaView,
+  ToastAndroid,
+} from "react-native";
 import { Card, Input, Button, Icon } from "react-native-elements";
+import getData from "../../RouteControllers/getData";
 
 export default function Login({ navigation }) {
   const [phoneNumber, setPhoneNumber] = useState(null);
   const [password, setPassword] = useState(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [mutationInProgress, setMutationInProgress] = useState(false);
+
+  const fetchValidUser = async () => {
+    setMutationInProgress(true);
+    let res = await getData("findUser");
+    if (
+      res &&
+      res.find(
+        (el) => el.phoneNumber === phoneNumber && el.password === password
+      )
+    ) {
+      let user = res.find(
+        (el) => el.phoneNumber === phoneNumber && el.password === password
+      );
+      let key = user.fullName + user.phoneNumber;
+      console.log("Key", key);
+      setMutationInProgress(false);
+      navigation.reset({
+        index: 0,
+        routes: [
+          {
+            name: "Dashboard",
+            params: { encryptionKey: key, userID: user.userID },
+          },
+        ],
+      });
+    } else {
+      setMutationInProgress(false);
+      ToastAndroid.show(
+        "Invalid phone number / password!...",
+        ToastAndroid.SHORT
+      );
+    }
+  };
 
   const handleLogin = () => {
     setIsSubmitted(true);
-    navigation.reset({
-      index: 0,
-      routes: [{ name: "Dashboard" }],
-    });
+    if (phoneNumber && password) {
+      fetchValidUser();
+    }
   };
 
   return (
@@ -43,6 +83,8 @@ export default function Login({ navigation }) {
             color: "#6CC417",
             marginRight: 5,
           }}
+          value={phoneNumber}
+          keyboardType="number-pad"
           label="Phone Number"
           onChangeText={(value) => {
             setPhoneNumber(value);
@@ -62,6 +104,7 @@ export default function Login({ navigation }) {
             color: "#6CC417",
             marginRight: 5,
           }}
+          value={password}
           label="Password"
           onChangeText={(value) => {
             setPassword(value);
@@ -75,9 +118,16 @@ export default function Login({ navigation }) {
         />
 
         <Button
-          icon={<Icon type="material" name="login" color="black" />}
-          title="Login"
+          icon={
+            mutationInProgress ? (
+              <Icon type="font-awesome" name="spinner" color="black" />
+            ) : (
+              <Icon type="material" name="login" color="black" />
+            )
+          }
+          title={mutationInProgress ? "Please wait..." : "Login"}
           buttonStyle={{ backgroundColor: "#6CC417" }}
+          disabled={mutationInProgress}
           titleStyle={{
             color: "black",
             marginLeft: 5,

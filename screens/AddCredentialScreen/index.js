@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, StatusBar, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  StatusBar,
+  ScrollView,
+  ToastAndroid,
+} from "react-native";
 import { Icon, Input, Button } from "react-native-elements";
 import * as Crypto from "crypto-js";
 import insertData from "../../RouteControllers/insertData";
@@ -27,15 +34,21 @@ export default function AddCredentialScreen({ navigation, route }) {
   );
 
   const encryptWithAES = (text) => {
-    return Crypto.AES.encrypt(text, route.params.key).toString();
+    return Crypto.AES.encrypt(text, route.params.encryptionKey).toString();
   };
 
   const addCredential = async (data) => {
     let res = await insertData("addCredential", data);
     if (res) {
       setMutationInProgress(false);
+      ToastAndroid.show(
+        "Credential details added successfully...",
+        ToastAndroid.SHORT
+      );
+      navigation.goBack();
     } else {
       setMutationInProgress(false);
+      ToastAndroid.show("Failed to add credentials!...", ToastAndroid.SHORT);
     }
     console.log(res);
   };
@@ -44,8 +57,14 @@ export default function AddCredentialScreen({ navigation, route }) {
     let res = await updateData("updateCredential", data);
     if (res) {
       setMutationInProgress(false);
+      ToastAndroid.show(
+        "Credential details updated successfully...",
+        ToastAndroid.SHORT
+      );
+      navigation.goBack();
     } else {
       setMutationInProgress(false);
+      ToastAndroid.show("Failed to update credentials!...", ToastAndroid.SHORT);
     }
     console.log(res);
   };
@@ -55,14 +74,18 @@ export default function AddCredentialScreen({ navigation, route }) {
       title: encryptWithAES(title),
       username: encryptWithAES(username),
       password: encryptWithAES(password),
+      userID: route.params.userID,
     };
 
-    setMutationInProgress(true);
+    console.log(data);
 
-    if (route && route.params && route.params.data) {
-      updateCredential(data);
-    } else {
-      addCredential(data);
+    if (title && username && password) {
+      setMutationInProgress(true);
+      if (route && route.params && route.params.data) {
+        updateCredential(data);
+      } else {
+        addCredential(data);
+      }
     }
   };
 
@@ -72,7 +95,7 @@ export default function AddCredentialScreen({ navigation, route }) {
       contentContainerStyle={{ alignItems: "flex-start", flex: 1 }}
     >
       <Icon
-        onPress={() => navigation.navigate("Dashboard")}
+        onPress={() => navigation.goBack()}
         name="arrow-left"
         type="font-awesome"
         color="#6CC417"
