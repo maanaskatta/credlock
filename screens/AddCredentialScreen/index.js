@@ -14,7 +14,6 @@ import updateData from "../../RouteControllers/updateData";
 
 export default function AddCredentialScreen({ navigation, route }) {
   const [isSubmitted, setIsSubmitted] = useState(false);
-
   const [mutationInProgress, setMutationInProgress] = useState(false);
 
   const [title, setTitle] = useState(
@@ -22,6 +21,7 @@ export default function AddCredentialScreen({ navigation, route }) {
       ? route.params.data.title
       : null
   );
+
   const [username, setUsername] = useState(
     route && route.params && route.params.data && route.params.data.username
       ? route.params.data.username
@@ -46,6 +46,7 @@ export default function AddCredentialScreen({ navigation, route }) {
         ToastAndroid.SHORT
       );
       navigation.goBack();
+      route.params.setIsChangeSeen(Math.random());
     } else {
       setMutationInProgress(false);
       ToastAndroid.show("Failed to add credentials!...", ToastAndroid.SHORT);
@@ -62,6 +63,7 @@ export default function AddCredentialScreen({ navigation, route }) {
         ToastAndroid.SHORT
       );
       navigation.goBack();
+      route.params.setIsChangeSeen(Math.random());
     } else {
       setMutationInProgress(false);
       ToastAndroid.show("Failed to update credentials!...", ToastAndroid.SHORT);
@@ -77,12 +79,15 @@ export default function AddCredentialScreen({ navigation, route }) {
       userID: route.params.userID,
     };
 
-    console.log(data);
-
     if (title && username && password) {
       setMutationInProgress(true);
       if (route && route.params && route.params.data) {
-        updateCredential(data);
+        let finalData = {
+          ...data,
+          CredID: route.params.data.CredID,
+        };
+        // console.log("Final Data", finalData);
+        updateCredential(finalData);
       } else {
         addCredential(data);
       }

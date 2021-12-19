@@ -15,7 +15,13 @@ import * as Crypto from "crypto-js";
 import Loading from "../../component/Loading";
 import deleteData from "../../RouteControllers/deleteData";
 
-const CredentialCard = ({ data, navigation, encryptionKey, userID }) => {
+const CredentialCard = ({
+  data,
+  navigation,
+  encryptionKey,
+  userID,
+  setIsChangeSeen,
+}) => {
   const [isOverlayVisible, setIsOverlayVisible] = useState(false);
   const [mutationInProgress, setMutationInProgress] = useState(false);
 
@@ -27,7 +33,7 @@ const CredentialCard = ({ data, navigation, encryptionKey, userID }) => {
         "Credential deleted successfully...",
         ToastAndroid.SHORT
       );
-      // setGates(gates.filter((item) => item.gateID !== gate.gateID));
+      setIsChangeSeen(Math.random());
       setMutationInProgress(false);
       setIsOverlayVisible(false);
     } else {
@@ -71,6 +77,7 @@ const CredentialCard = ({ data, navigation, encryptionKey, userID }) => {
                 data: data,
                 encryptionKey: encryptionKey,
                 userID: userID,
+                setIsChangeSeen: setIsChangeSeen,
               })
             }
           />
@@ -133,6 +140,7 @@ export default function Dashboard({ navigation, route }) {
   const [isLogoutOverlayOpen, setIsLogoutOverlayOpen] = useState(false);
   const [credentials, setCredentials] = useState(null);
   console.log("Encryption Key", route.params.encryptionKey);
+  const [isChangeSeen, setIsChangeSeen] = useState(null);
 
   const decryptWithAES = (text) => {
     return Crypto.AES.decrypt(text, route.params.encryptionKey).toString(
@@ -176,7 +184,7 @@ export default function Dashboard({ navigation, route }) {
   useEffect(() => {
     setIsLoading(true);
     getUserCredentialsData();
-  }, []);
+  }, [isChangeSeen]);
 
   const handleLogOut = () => {
     navigation.reset({
@@ -244,6 +252,7 @@ export default function Dashboard({ navigation, route }) {
                   data={credential}
                   navigation={navigation}
                   userID={route.params.userID}
+                  setIsChangeSeen={setIsChangeSeen}
                 />
               </View>
             );
@@ -290,6 +299,7 @@ export default function Dashboard({ navigation, route }) {
           navigation.navigate("AddCredentials", {
             encryptionKey: route.params.encryptionKey,
             userID: route.params.userID,
+            setIsChangeSeen: setIsChangeSeen,
           })
         }
       >
