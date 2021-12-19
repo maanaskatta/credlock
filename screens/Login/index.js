@@ -79,9 +79,9 @@ export default function Login({ navigation }) {
           leftIcon={{
             type: "font-awesome",
             name: "phone",
-            size: 18,
+            size: 20,
             color: "#6CC417",
-            marginRight: 5,
+            marginRight: 8,
           }}
           value={phoneNumber}
           keyboardType="number-pad"
@@ -94,15 +94,17 @@ export default function Login({ navigation }) {
           errorMessage={
             isSubmitted && !phoneNumber ? "Enter your phone number!..." : ""
           }
+          inputStyle={{ fontWeight: "normal", letterSpacing: 2, fontSize: 18 }}
+          placeholderTextColor="#6CC417"
         />
         <Input
           placeholder="Password"
           leftIcon={{
             type: "font-awesome",
             name: "lock",
-            size: 18,
+            size: 20,
             color: "#6CC417",
-            marginRight: 5,
+            marginRight: 8,
           }}
           value={password}
           label="Password"
@@ -115,6 +117,8 @@ export default function Login({ navigation }) {
           errorMessage={
             isSubmitted && !password ? "Enter your password!..." : ""
           }
+          inputStyle={{ fontWeight: "normal", letterSpacing: 2, fontSize: 18 }}
+          placeholderTextColor="#6CC417"
         />
 
         <Button
@@ -150,7 +154,7 @@ export default function Login({ navigation }) {
           type="clear"
           onPress={() => navigation.navigate("Signup")}
           title={"Create account"}
-          titleStyle={{ color: "#6CC417", fontSize: 14 }}
+          titleStyle={{ color: "#6CC417", fontSize: 16 }}
         />
       </View>
     </SafeAreaView>
@@ -171,5 +175,6 @@ const styles = StyleSheet.create({
 
   signupText: {
     color: "whitesmoke",
+    fontSize: 16,
   },
 });

@@ -86,7 +86,6 @@ export default function AddCredentialScreen({ navigation, route }) {
           ...data,
           CredID: route.params.data.CredID,
         };
-        // console.log("Final Data", finalData);
         updateCredential(finalData);
       } else {
         addCredential(data);
