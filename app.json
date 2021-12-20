@@ -17,9 +17,13 @@
       "**/*"
     ],
     "ios": {
+       "bundleIdentifier": "com.laptalk.credlock",
+      "buildNumber": "1.0.0",
       "supportsTablet": true
     },
     "android": {
+      "package": "com.laptalk.credlock",
+      "versionCode": 1,
       "adaptiveIcon": {
         "foregroundImage": "./assets/favicon.png",
         "backgroundColor": "#ffffff"
