@@ -6,6 +6,7 @@ import {
   SafeAreaView,
   ToastAndroid,
   Image,
+  ActivityIndicator,
 } from "react-native";
 import { Card, Input, Button, Icon } from "react-native-elements";
 import getData from "../../RouteControllers/getData";
@@ -106,7 +107,7 @@ export default function Login({ navigation }) {
           errorMessage={
             isSubmitted && !phoneNumber ? "Enter your phone number!..." : ""
           }
-          inputStyle={{ fontWeight: "normal", letterSpacing: 2, fontSize: 18 }}
+          inputStyle={{ fontWeight: "bold", letterSpacing: 2, fontSize: 18 }}
           placeholderTextColor="#6CC417"
         />
         <Input
@@ -129,14 +130,14 @@ export default function Login({ navigation }) {
           errorMessage={
             isSubmitted && !password ? "Enter your password!..." : ""
           }
-          inputStyle={{ fontWeight: "normal", letterSpacing: 2, fontSize: 18 }}
+          inputStyle={{ fontWeight: "bold", letterSpacing: 2, fontSize: 18 }}
           placeholderTextColor="#6CC417"
         />
 
         <Button
           icon={
             mutationInProgress ? (
-              <Icon type="font-awesome" name="spinner" color="black" />
+              <ActivityIndicator size="large" color="gray" />
             ) : (
               <Icon type="material" name="login" color="black" />
             )

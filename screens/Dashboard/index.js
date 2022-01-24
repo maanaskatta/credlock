@@ -8,6 +8,7 @@ import {
   ScrollView,
   TouchableOpacity,
   ToastAndroid,
+  Clipboard,
 } from "react-native";
 import { Icon, Card, Overlay } from "react-native-elements";
 import { Button } from "react-native-elements/dist/buttons/Button";
@@ -24,6 +25,8 @@ const CredentialCard = ({
 }) => {
   const [isOverlayVisible, setIsOverlayVisible] = useState(false);
   const [mutationInProgress, setMutationInProgress] = useState(false);
+  const [isUsernameCopied, setIsUsernameCopied] = useState(false);
+  const [isPasswordCopied, setIsPasswordCopied] = useState(false);
 
   const deleteCredential = async (data) => {
     setMutationInProgress(true);
@@ -43,6 +46,22 @@ const CredentialCard = ({
     }
   };
 
+  const copyUsernameToClipboard = (value) => {
+    setIsUsernameCopied(true);
+    Clipboard.setString(value);
+    setInterval(() => {
+      setIsUsernameCopied(false);
+    }, 1000);
+  };
+
+  const copyPasswordToClipboard = (value) => {
+    setIsPasswordCopied(true);
+    Clipboard.setString(value);
+    setInterval(() => {
+      setIsPasswordCopied(false);
+    }, 1000);
+  };
+
   return (
     <Card
       containerStyle={{
@@ -50,17 +69,58 @@ const CredentialCard = ({
         borderColor: "#6CC417",
         width: "100%",
         marginLeft: -0,
+        borderRadius: 10,
       }}
     >
       <Card.Title style={styles.credentialTitle}>{data.title}</Card.Title>
       <View>
         <View style={styles.credentialContainer}>
           <Text style={styles.credentialLabel}>Username :</Text>
-          <Text style={styles.credentialValue}>{data.username}</Text>
+          <View
+            style={{
+              flex: 1,
+              flexDirection: "row",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Text style={styles.credentialValue}>{data.username}</Text>
+            {!isUsernameCopied ? (
+              <Icon
+                name="clone"
+                type="font-awesome"
+                color="aqua"
+                size={20}
+                onPress={() => copyUsernameToClipboard(data.username)}
+              />
+            ) : (
+              <Icon name="check" type="material" color="lime" size={20} />
+            )}
+          </View>
         </View>
         <View style={styles.credentialContainer}>
           <Text style={styles.credentialLabel}>Password :</Text>
-          <Text style={styles.credentialValue}>{data.password}</Text>
+          <View
+            style={{
+              flex: 1,
+              flexDirection: "row",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Text style={styles.credentialValue}>{data.password}</Text>
+            {!isPasswordCopied ? (
+              <Icon
+                name="clone"
+                type="font-awesome"
+                color="aqua"
+                size={20}
+                onPress={() => copyPasswordToClipboard(data.password)}
+              />
+            ) : (
+              <Icon name="check" type="material" color="lime" size={20} />
+            )}
+          </View>
         </View>
       </View>
       <View
@@ -243,7 +303,10 @@ export default function Dashboard({ navigation, route }) {
       {isLoading ? (
         <Loading />
       ) : credentials && credentials.length > 0 ? (
-        <ScrollView style={{ flex: 3, paddingTop: 10 }}>
+        <ScrollView
+          contentContainerStyle={{ paddingBottom: 100 }}
+          style={{ flex: 3, paddingTop: 10 }}
+        >
           {credentials.map((credential, index) => {
             return (
               <View key={index}>
@@ -321,24 +384,27 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "baseline",
     justifyContent: "space-between",
+    paddingBottom: 5,
   },
 
-  credentialTitle: { color: "#6CC417", fontSize: 25, fontWeight: "bold" },
+  credentialTitle: { color: "#6CC417", fontSize: 18, fontWeight: "bold" },
 
   credentialLabel: {
     color: "#949996",
     fontWeight: "bold",
+    fontSize: 14,
   },
 
   credentialValue: {
     color: "white",
     fontWeight: "bold",
     marginLeft: 5,
-    fontSize: 14,
+    fontSize: 16,
+    marginRight: 10,
   },
 
   credentialContainer: {
-    flexDirection: "row",
-    marginBottom: 5,
+    flexDirection: "column",
+    marginBottom: 10,
   },
 });
