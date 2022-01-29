@@ -6,6 +6,7 @@ import {
   StatusBar,
   ScrollView,
   ToastAndroid,
+  ActivityIndicator,
 } from "react-native";
 import { Icon, Input, Button } from "react-native-elements";
 import * as Crypto from "crypto-js";
@@ -186,10 +187,9 @@ export default function AddCredentialScreen({ navigation, route }) {
           <Button
             icon={
               mutationInProgress ? (
-                <Icon
-                  type="font-awesome"
-                  name="spinner"
-                  color="black"
+                <ActivityIndicator
+                  size="large"
+                  color="gray"
                   style={{ marginLeft: 10 }}
                 />
               ) : (

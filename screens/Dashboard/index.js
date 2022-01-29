@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   ToastAndroid,
   Clipboard,
+  TextInput,
 } from "react-native";
 import { Icon, Card, Overlay } from "react-native-elements";
 import { Button } from "react-native-elements/dist/buttons/Button";
@@ -199,8 +200,8 @@ export default function Dashboard({ navigation, route }) {
   const [isLoading, setIsLoading] = useState(false);
   const [isLogoutOverlayOpen, setIsLogoutOverlayOpen] = useState(false);
   const [credentials, setCredentials] = useState(null);
-  console.log("Encryption Key", route.params.encryptionKey);
   const [isChangeSeen, setIsChangeSeen] = useState(null);
+  const [searchedCredential, setSearchedCredential] = useState(null);
 
   const decryptWithAES = (text) => {
     return Crypto.AES.decrypt(text, route.params.encryptionKey).toString(
@@ -268,6 +269,26 @@ export default function Dashboard({ navigation, route }) {
         />
       </View>
 
+      <TextInput
+        value={searchedCredential}
+        onChangeText={(e) => setSearchedCredential(e)}
+        placeholder="Search..."
+        placeholderTextColor="#6CC417"
+        style={{
+          backgroundColor: "black",
+
+          paddingLeft: 15,
+          marginTop: 10,
+          borderColor: "#6CC417",
+          borderWidth: 2,
+          color: "#6CC417",
+          paddingTop: 8,
+          paddingBottom: 8,
+          borderRadius: 10,
+          fontSize: 18,
+        }}
+      />
+
       <Overlay
         isVisible={isLogoutOverlayOpen}
         onBackdropPress={() => setIsLogoutOverlayOpen(false)}
@@ -303,24 +324,52 @@ export default function Dashboard({ navigation, route }) {
       {isLoading ? (
         <Loading />
       ) : credentials && credentials.length > 0 ? (
-        <ScrollView
-          contentContainerStyle={{ paddingBottom: 100 }}
-          style={{ flex: 3, paddingTop: 10 }}
-        >
-          {credentials.map((credential, index) => {
-            return (
-              <View key={index}>
-                <CredentialCard
-                  encryptionKey={route.params.encryptionKey}
-                  data={credential}
-                  navigation={navigation}
-                  userID={route.params.userID}
-                  setIsChangeSeen={setIsChangeSeen}
-                />
-              </View>
-            );
-          })}
-        </ScrollView>
+        !searchedCredential ||
+        credentials.filter((el) =>
+          searchedCredential
+            ? el.title.toLowerCase().includes(searchedCredential.toLowerCase())
+            : false
+        ).length > 0 ? (
+          <ScrollView
+            contentContainerStyle={{ paddingBottom: 100 }}
+            style={{ flex: 3, paddingTop: 10 }}
+          >
+            {credentials
+              .filter((el) =>
+                searchedCredential
+                  ? el.title
+                      .toLowerCase()
+                      .includes(searchedCredential.toLowerCase())
+                  : true
+              )
+              .map((credential, index) => {
+                return (
+                  <View key={index}>
+                    <CredentialCard
+                      encryptionKey={route.params.encryptionKey}
+                      data={credential}
+                      navigation={navigation}
+                      userID={route.params.userID}
+                      setIsChangeSeen={setIsChangeSeen}
+                    />
+                  </View>
+                );
+              })}
+          </ScrollView>
+        ) : (
+          <View
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              height: "70%",
+            }}
+          >
+            <Text style={{ color: "#6CC417", fontSize: 20 }}>
+              No results found!...
+            </Text>
+          </View>
+        )
       ) : (
         <View
           style={{
