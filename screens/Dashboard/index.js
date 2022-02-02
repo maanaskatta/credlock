@@ -210,7 +210,6 @@ export default function Dashboard({ navigation, route }) {
   };
 
   const getUserCredentialsData = async () => {
-    console.log(route.params.userID);
     let res = await axios
       .get("https://credlock.herokuapp.com/getUserCredentials", {
         params: {
@@ -226,7 +225,6 @@ export default function Dashboard({ navigation, route }) {
 
     if (res && res.data) {
       setIsLoading(false);
-      console.log("Creds", res.data);
 
       let finalData = res.data.map((cred) => {
         return {

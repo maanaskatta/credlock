@@ -52,7 +52,6 @@ export default function AddCredentialScreen({ navigation, route }) {
       setMutationInProgress(false);
       ToastAndroid.show("Failed to add credentials!...", ToastAndroid.SHORT);
     }
-    console.log(res);
   };
 
   const updateCredential = async (data) => {
@@ -69,7 +68,6 @@ export default function AddCredentialScreen({ navigation, route }) {
       setMutationInProgress(false);
       ToastAndroid.show("Failed to update credentials!...", ToastAndroid.SHORT);
     }
-    console.log(res);
   };
 
   const handleSubmit = () => {

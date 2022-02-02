@@ -23,7 +23,6 @@ export default function Signup({ navigation }) {
     setMutationInProgress(true);
     let res = await insertData("addUser", data);
     if (res) {
-      console.log(res.data);
       setMutationInProgress(false);
       ToastAndroid.show("User added successfully!...", ToastAndroid.SHORT);
       navigation.navigate("Login");
@@ -31,7 +30,6 @@ export default function Signup({ navigation }) {
       setMutationInProgress(false);
       ToastAndroid.show("Failed to add new user!...", ToastAndroid.SHORT);
     }
-    console.log(res);
   };
 
   const handleSignup = () => {
