@@ -7,7 +7,6 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  ToastAndroid,
   Clipboard,
   TextInput,
 } from "react-native";
@@ -33,15 +32,13 @@ const CredentialCard = ({
     setMutationInProgress(true);
     let res = await deleteData("deleteCredential", data);
     if (res) {
-      ToastAndroid.show(
-        "Credential deleted successfully...",
-        ToastAndroid.SHORT
-      );
+      alert("Credential deleted successfully...");
+
       setIsChangeSeen(Math.random());
       setMutationInProgress(false);
       setIsOverlayVisible(false);
     } else {
-      ToastAndroid.show("Failed to delete credential!...", ToastAndroid.SHORT);
+      alert("Failed to delete credential!...");
       setMutationInProgress(false);
       setIsOverlayVisible(false);
     }
@@ -220,7 +217,7 @@ export default function Dashboard({ navigation, route }) {
         console.log(err);
         setIsLoading(false);
 
-        ToastAndroid.show("Failed to load data...", ToastAndroid.SHORT);
+        alert("Failed to load data...");
       });
 
     if (res && res.data) {

@@ -4,13 +4,11 @@ import {
   Text,
   StyleSheet,
   SafeAreaView,
-  ToastAndroid,
   Image,
   ActivityIndicator,
 } from "react-native";
 import { Card, Input, Button, Icon } from "react-native-elements";
 import getData from "../../RouteControllers/getData";
-import Logo from "../../assets/CredLockLogo.png";
 import SelectDropdown from "react-native-select-dropdown";
 import Loading from "../../component/Loading";
 
@@ -32,7 +30,7 @@ const SelectUser = ({ users, setSelectedUser }) => {
       renderDropdownIcon={() => (
         <Icon name="chevron-down" type="font-awesome" color="#6CC417" />
       )}
-      rowStyle={{ backgroundColor: "#6CC417" }}
+      rowStyle={{ backgroundColor: "#6CC417", marginBottom: 4 }}
       rowTextStyle={{ color: "black", fontWeight: "bold" }}
     />
   );
@@ -54,7 +52,7 @@ export default function Login({ navigation }) {
       setUsers(res);
       setIsLoading(false);
     } else {
-      ToastAndroid.show("No users found!...", ToastAndroid.SHORT);
+      alert("No users found!...");
       setIsLoading(false);
     }
   };
@@ -79,10 +77,7 @@ export default function Login({ navigation }) {
       });
     } else {
       setMutationInProgress(false);
-      ToastAndroid.show(
-        "Invalid phone number / password!...",
-        ToastAndroid.SHORT
-      );
+      alert("Invalid phone number / password!...");
     }
   };
 
@@ -91,10 +86,7 @@ export default function Login({ navigation }) {
     if (selectedUser && password) {
       fetchValidUser();
     } else {
-      ToastAndroid.show(
-        "User/Password cannot be empty!...",
-        ToastAndroid.SHORT
-      );
+      alert("User/Password cannot be empty!...");
     }
   };
 
@@ -102,14 +94,16 @@ export default function Login({ navigation }) {
     return (
       <SafeAreaView style={styles.container}>
         <View>
-          <Image
-            source={Logo}
+          <Text
             style={{
-              flexDirection: "row",
-              justifyContent: "center",
-              alignItems: "center",
+              color: "#6CC417",
+              fontSize: 28,
+              fontWeight: "bold",
+              fontStyle: "italic",
             }}
-          />
+          >
+            Credlock
+          </Text>
         </View>
         <Card
           containerStyle={{
@@ -144,7 +138,12 @@ export default function Login({ navigation }) {
             errorMessage={
               isSubmitted && !password ? "Enter your password!..." : ""
             }
-            inputStyle={{ fontWeight: "bold", letterSpacing: 2, fontSize: 18 }}
+            inputStyle={{
+              fontWeight: "bold",
+              letterSpacing: 2,
+              fontSize: 18,
+              color: "#6CC417",
+            }}
             placeholderTextColor="#6CC417"
           />
 

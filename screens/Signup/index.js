@@ -1,12 +1,5 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  StatusBar,
-  ScrollView,
-  ToastAndroid,
-} from "react-native";
+import { View, Text, StyleSheet, StatusBar, ScrollView } from "react-native";
 import { Icon } from "react-native-elements/dist/icons/Icon";
 import { Input, Button } from "react-native-elements";
 import insertData from "../../RouteControllers/insertData";
@@ -24,11 +17,11 @@ export default function Signup({ navigation }) {
     let res = await insertData("addUser", data);
     if (res) {
       setMutationInProgress(false);
-      ToastAndroid.show("User added successfully!...", ToastAndroid.SHORT);
+      alert("User added successfully!...");
       navigation.navigate("Login");
     } else {
       setMutationInProgress(false);
-      ToastAndroid.show("Failed to add new user!...", ToastAndroid.SHORT);
+      alert("Failed to add new user!...");
     }
   };
 

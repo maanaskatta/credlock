@@ -5,7 +5,6 @@ import {
   StyleSheet,
   StatusBar,
   ScrollView,
-  ToastAndroid,
   ActivityIndicator,
 } from "react-native";
 import { Icon, Input, Button } from "react-native-elements";
@@ -42,15 +41,12 @@ export default function AddCredentialScreen({ navigation, route }) {
     let res = await insertData("addCredential", data);
     if (res) {
       setMutationInProgress(false);
-      ToastAndroid.show(
-        "Credential details added successfully...",
-        ToastAndroid.SHORT
-      );
+      alert("Credential details added successfully...");
       navigation.goBack();
       route.params.setIsChangeSeen(Math.random());
     } else {
       setMutationInProgress(false);
-      ToastAndroid.show("Failed to add credentials!...", ToastAndroid.SHORT);
+      alert("Failed to add credentials!...");
     }
   };
 
@@ -58,15 +54,12 @@ export default function AddCredentialScreen({ navigation, route }) {
     let res = await updateData("updateCredential", data);
     if (res) {
       setMutationInProgress(false);
-      ToastAndroid.show(
-        "Credential details updated successfully...",
-        ToastAndroid.SHORT
-      );
+      alert("Credential details updated successfully...");
       navigation.goBack();
       route.params.setIsChangeSeen(Math.random());
     } else {
       setMutationInProgress(false);
-      ToastAndroid.show("Failed to update credentials!...", ToastAndroid.SHORT);
+      alert("Failed to update credentials!...");
     }
   };
 
