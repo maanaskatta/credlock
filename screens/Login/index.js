@@ -13,6 +13,7 @@ import getData from "../../RouteControllers/getData";
 import Logo from "../../assets/CredLockLogo.png";
 import SelectDropdown from "react-native-select-dropdown";
 import Loading from "../../component/Loading";
+import Hashes from "jshashes";
 
 const SelectUser = ({ users, setSelectedUser }) => {
   return (
@@ -65,7 +66,8 @@ export default function Login({ navigation }) {
 
   const fetchValidUser = () => {
     setMutationInProgress(true);
-    if (selectedUser.password === password) {
+    var hashedPassword = new Hashes.SHA1().b64(password);
+    if (selectedUser.password === hashedPassword) {
       let key = selectedUser.fullName + selectedUser.phoneNumber;
       setMutationInProgress(false);
       navigation.reset({
