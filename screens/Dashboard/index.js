@@ -211,7 +211,7 @@ export default function Dashboard({ navigation, route }) {
 
   const getUserCredentialsData = async () => {
     let res = await axios
-      .get("https://credlock.herokuapp.com/getUserCredentials", {
+      .get("https://credlock-heroku-22.herokuapp.com/getUserCredentials", {
         params: {
           userID: route.params.userID,
         },

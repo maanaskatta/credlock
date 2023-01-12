@@ -146,7 +146,12 @@ export default function Login({ navigation }) {
             errorMessage={
               isSubmitted && !password ? "Enter your password!..." : ""
             }
-            inputStyle={{ fontWeight: "bold", letterSpacing: 2, fontSize: 18 }}
+            inputStyle={{
+              fontWeight: "bold",
+              letterSpacing: 2,
+              fontSize: 18,
+              color: "#6CC417",
+            }}
             placeholderTextColor="#6CC417"
           />
 
@@ -186,6 +191,12 @@ export default function Login({ navigation }) {
             titleStyle={{ color: "#6CC417", fontSize: 16 }}
           />
         </View>
+        <Button
+          title={"Refresh"}
+          type="clear"
+          onPress={() => fetchUsers()}
+          titleStyle={{ color: "#6CC417" }}
+        />
       </SafeAreaView>
     );
   }
